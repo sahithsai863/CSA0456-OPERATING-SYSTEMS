@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <fcntl.h>
+#include <io.h>
+#include <sys/stat.h>
+
+#define BUFFER_SIZE 1024
+
+int main()
+{
+    int source, destination;
+    int bytesRead;
+    char buffer[BUFFER_SIZE];
+
+    /* File names in current project folder */
+    char sourceFile[] = "input.txt";
+    char destFile[]   = "output.txt";
+
+    /* Open source file */
+    source = _open(sourceFile, O_RDONLY);
+
+    if (source == -1)
+    {
+        printf("Error: Cannot open source file.\n");
+        printf("Place input.txt in this folder:\n");
+        printf("C:\\Users\\SAHITHSAI PASUPULA\\OneDrive\\Documents\\COURSES\\OS\\\n");
+        return 1;
+    }
+
+    /* Create destination file */
+    destination = _open(
+        destFile,
+        O_CREAT | O_WRONLY | O_TRUNC,
+        S_IREAD | S_IWRITE
+    );
+
+    if (destination == -1)
+    {
+        printf("Error: Cannot create destination file.\n");
+        _close(source);
+        return 1;
+    }
+
+    /* Copy file contents */
+    while ((bytesRead = _read(source, buffer, BUFFER_SIZE)) > 0)
+    {
+        _write(destination, buffer, bytesRead);
+    }
+
+    /* Close files */
+    _close(source);
+    _close(destination);
+
+    /* Success message */
+    printf("File copied successfully!\n");
+    printf("Source File      : %s\n", sourceFile);
+    printf("Destination File : %s\n", destFile);
+
+    return 0;
+}
